@@ -1292,9 +1292,6 @@
   <main id="detailsPage" class="page">
     <section class="details-wrapper">
       <div class="container">
-         <div style="margin-bottom: 20px;">
-          <button class="btn btn-outline" type="button" onclick="goBack()">← Back</button>
-        </div>
         <div class="details" id="productDetails"></div>
       </div>
     </section>
@@ -1345,9 +1342,6 @@
           <p>Enter your delivery details and order through WhatsApp.</p>
         </div>
 
-        <div style="margin-bottom: 20px;">
-          <button class="btn btn-outline" type="button" onclick="goBack()">← Back</button>
-        </div>
         <div class="checkout-box">
           <form id="checkoutForm" onsubmit="submitOrder(event)">
             <div class="form-group">
@@ -1568,7 +1562,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const WHATSAPP_NUMBER = "916900188313";
+    const WHATSAPP_NUMBER = "6900188313";
     const OWNER_USERNAME = "owner";
     const OWNER_PASSWORD = "keisam";
     const OWNER_SESSION_KEY = "shopEaseOwnerSession";
@@ -1628,12 +1622,12 @@
       {
         id: 6,
         name: "Smart Watch",
-        category: "Home",
-        price: 650,
-        oldPrice: 1300,
-        discount: 50,
-        description: "NK.",
-        image: "image/WhatsApp Image 2026-09-11 at 11.13.12 PM.jpeg"
+        category: "Electronics",
+        price: 2499,
+        oldPrice: 3999,
+        discount: 38,
+        description: "Smart fitness watch with health and activity tracking.",
+        image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"
       },
       {
         id: 7,
@@ -1660,8 +1654,8 @@
     let products = [...defaultProducts];
     let cart = JSON.parse(localStorage.getItem("shopEaseCart")) || [];
     let detailQuantity = 1;
-let currentPage = "home";
     let pageHistory = [];
+
     function saveCart() {
       localStorage.setItem("shopEaseCart", JSON.stringify(cart));
       updateCartCount();
@@ -1689,19 +1683,21 @@ let currentPage = "home";
       }, 2200);
     }
 
-     function showPage(pageId, options = {}) {
-      const { registerHistory = true } = options;
+    function showPage(pageId) {
       const isOwnerArea = pageId === "owner-panel" || pageId === "owner-login";
+      const currentPage = document.querySelector(".page.active")?.id;
 
       if (pageId === "owner-panel" && !isOwnerLoggedIn()) {
         pageId = "owner-login";
       }
 
-        if (registerHistory && pageId !== currentPage) {
-        pageHistory.push(currentPage);
+      if (currentPage && currentPage !== pageId) {
+        const lastEntry = pageHistory[pageHistory.length - 1];
+        if (lastEntry !== currentPage) {
+          pageHistory.push(currentPage);
+        }
       }
 
-      currentPage = pageId;
       document.querySelectorAll(".page").forEach((page) => {
         page.classList.toggle("active", page.id === pageId);
       });
@@ -1713,6 +1709,11 @@ let currentPage = "home";
 
       const nav = document.getElementById("navLinks");
       if (nav) nav.classList.remove("open");
+    }
+
+    function goBack() {
+      const previousPage = pageHistory.pop() || "home";
+      showPage(previousPage);
     }
 
     function isOwnerLoggedIn() {
@@ -1983,6 +1984,10 @@ let currentPage = "home";
       if (!container) return;
 
       container.innerHTML = `
+        <div style="display: flex; justify-content: flex-start; margin-bottom: 20px;">
+          <button class="btn btn-outline" type="button" onclick="goBack()">← Back</button>
+        </div>
+
         <div class="details-image">
           <img src="${product.image}" alt="${product.name}" />
         </div>
