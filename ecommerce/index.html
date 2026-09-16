@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Modern e-commerce store with WhatsApp ordering" />
-  <title>ShopEase — Online Store</title>
+  <title>NK Shop — Online Store</title>
   <style>
     :root {
       --primary: #111827;
@@ -1191,7 +1191,7 @@
 <body>
   <header>
     <nav class="navbar">
-      <a href="#" class="logo" onclick="showPage('home')">Shop<span>Ease</span></a>
+      <a href="#" class="logo" onclick="showPage('home')">NK <span>Shop</span></a>
       <button class="menu-btn" type="button" onclick="toggleMenu()">☰</button>
       <div class="nav-links" id="navLinks">
         <a href="#" onclick="showPage('home'); closeMenu()">Home</a>
@@ -1260,6 +1260,17 @@
         <div class="products-grid" id="featuredProducts"></div>
       </div>
     </section>
+
+    <section class="section" style="padding-top: 10px;">
+      <div class="container">
+        <div class="section-title">
+          <h2>All Products</h2>
+          <p>Browse our complete collection right from the main page.</p>
+        </div>
+
+        <div class="products-grid" id="mainProductsGrid"></div>
+      </div>
+    </section>
   </main>
 
   <main id="products" class="page">
@@ -1268,6 +1279,10 @@
         <div class="section-title">
           <h2>All Products</h2>
           <p>Browse our complete collection.</p>
+        </div>
+
+        <div style="display: flex; justify-content: flex-start; margin-bottom: 20px;">
+          <button class="btn btn-outline" type="button" onclick="goBack()">← Back to Main Page</button>
         </div>
 
         <div class="filter-bar">
@@ -1533,7 +1548,7 @@
   <footer>
     <div class="footer-content">
       <div>
-        <h3>ShopEase</h3>
+        <h3>NK Shop</h3>
         <p>A simple online store focused on easy WhatsApp ordering.</p>
       </div>
 
@@ -1556,7 +1571,7 @@
       </div>
     </div>
 
-    <div class="copyright">© 2026 ShopEase. All rights reserved.</div>
+    <div class="copyright">© 2026 NK Shop. All rights reserved.</div>
   </footer>
 
   <div class="toast" id="toast"></div>
@@ -1919,23 +1934,10 @@
       `).join("");
     }
 
-    function renderProducts() {
-      const searchInput = document.getElementById("searchInput");
-      const categoryFilter = document.getElementById("categoryFilter");
-      const container = document.getElementById("productsGrid");
-
+    function renderProductCards(container, productList) {
       if (!container) return;
 
-      const query = (searchInput ? searchInput.value.trim().toLowerCase() : "");
-      const selectedCategory = categoryFilter ? categoryFilter.value : "All";
-
-      const filteredProducts = products.filter((product) => {
-        const matchesSearch = product.name.toLowerCase().includes(query) || product.category.toLowerCase().includes(query);
-        const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
-        return matchesSearch && matchesCategory;
-      });
-
-      if (!filteredProducts.length) {
+      if (!productList.length) {
         container.innerHTML = `
           <div class="empty-cart" style="grid-column: 1 / -1;">
             <div class="empty-cart-icon">🔎</div>
@@ -1946,7 +1948,7 @@
         return;
       }
 
-      container.innerHTML = filteredProducts.map((product) => `
+      container.innerHTML = productList.map((product) => `
         <article class="product-card">
           <div class="product-image" onclick="openProduct(${product.id})">
             <img src="${product.image}" alt="${product.name}" />
@@ -1967,6 +1969,31 @@
           </div>
         </article>
       `).join("");
+    }
+
+    function renderProducts() {
+      const searchInput = document.getElementById("searchInput");
+      const categoryFilter = document.getElementById("categoryFilter");
+      const container = document.getElementById("productsGrid");
+
+      if (!container) return;
+
+      const query = (searchInput ? searchInput.value.trim().toLowerCase() : "");
+      const selectedCategory = categoryFilter ? categoryFilter.value : "All";
+
+      const filteredProducts = products.filter((product) => {
+        const matchesSearch = product.name.toLowerCase().includes(query) || product.category.toLowerCase().includes(query);
+        const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+      });
+
+      renderProductCards(container, filteredProducts);
+    }
+
+    function renderMainPageProducts() {
+      const container = document.getElementById("mainProductsGrid");
+      if (!container) return;
+      renderProductCards(container, products);
     }
 
     function changeDetailQuantity(change) {
@@ -2268,6 +2295,7 @@
     document.addEventListener("DOMContentLoaded", () => {
       loadOwnerProducts();
       renderFeaturedProducts();
+      renderMainPageProducts();
       renderProducts();
       renderCart();
       renderCheckout();
@@ -2280,6 +2308,7 @@
     if (document.readyState === "complete") {
       loadOwnerProducts();
       renderFeaturedProducts();
+      renderMainPageProducts();
       renderProducts();
       renderCart();
       renderCheckout();
